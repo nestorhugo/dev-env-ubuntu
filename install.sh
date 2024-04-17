@@ -1,4 +1,11 @@
-# Variáveis do apt
+# ---------------- VARIAVEIS ---------
+
+# Definição de cores
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m'
+
 
 PROGRAMAS_PARA_INSTALAR=(
   snapd
@@ -19,10 +26,14 @@ sudo apt update -y
 sudo apt update -y
 
 # ------- INSTALANDO OH MY ZSH ----------------
+echo -e "${YELLOW}Iniciando instalação do OhMyZSH...${NC}"
+
 sudo apt install zsh
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 
 # --------- INSTALANDO NVM ---------------------
+echo -e "${YELLOW}Iniciando instalação do nvm/Node 20.12.2 ...${NC}"
+
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
 
 export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
@@ -31,6 +42,8 @@ source ~/.zshrc
 nvm install 20.12.2
 
 # --------- INSTALANDO DOCKER -------------------
+echo -e "${YELLOW}Iniciando instalação do Docker...${NC}"
+
 # Add Docker's official GPG key:
 sudo apt-get update
 sudo apt-get install ca-certificates curl
@@ -47,11 +60,13 @@ sudo apt-get update
 
 sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
 sudo apt-get install docker-compose-plugin
+sudo usermod -aG docker $USER
 
 
-# Instalar programas no apt
+# ----------Instalar programas no apt-----------
 for nome_do_programa in ${PROGRAMAS_PARA_INSTALAR[@]}; do
   if ! dpkg -l | grep -q $nome_do_programa; then # Só instala se já não estiver instalado
+    echo -e "${YELLOW}Iniciando instalação do $nome_do_programa ...${NC}"
     apt install "$nome_do_programa" -y
   else
     echo "[INSTALADO] - $nome_do_programa"
@@ -69,6 +84,16 @@ flatpak install flathub com.discordapp.Discord -y
 flatpak install flathub com.spotify.Client -y
 flatpak install flathub com.mattjakeman.ExtensionManager -y
 flatpak install flathub org.gnome.Boxes -y
+
+# --------------- CONFIGURAÇÃO DO GIT --------------------
+echo -e "${YELLOW}Configurando o Git...${NC}"
+echo -n -e "${YELLOW}Digite seu nome de usuário do GitHub: ${NC}"
+read github_user
+echo -n -e "${YELLOW}Digite seu e-mail associado ao GitHub: ${NC}"
+read github_email
+
+git config --global user.name "$github_user"
+git config --global user.email "$github_email"
 
 # ----------------------------- PÓS-INSTALAÇÃO ----------------------------- #
 ## Finalização, atualização e limpeza##
